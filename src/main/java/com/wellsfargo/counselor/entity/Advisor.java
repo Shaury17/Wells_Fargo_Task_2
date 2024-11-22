@@ -1,10 +1,8 @@
 package com.wellsfargo.counselor.entity;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import java.time.LocalDate;
+import java.util.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Advisor {
@@ -27,6 +25,10 @@ public class Advisor {
 
     @Column(nullable = false)
     private String email;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "advisorId")
+    private List<Client> clients = new ArrayList<>();
 
     protected Advisor() {
 
@@ -83,4 +85,62 @@ public class Advisor {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    public void addClient(Client client) {
+        clients.add(client);
+    }
+
+    public Client createClient(String userName, String firstName, String lastName, String address, String phone, String email) {
+        Client client = new Client(userName, firstName, lastName, address, phone, email);
+        this.addClient(client);
+        return client;
+    }
+
+    public boolean updateClient(int clientId, String firstName, String lastName, String address, String phone, String email) {
+        for (Client client : clients) {
+            if (client.getClientId() == clientId) {
+                client.setFirstName(firstName);
+                client.setFirstName(lastName);
+                client.setFirstName(address);
+                client.setFirstName(phone);
+                client.setEmail(email);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeClient(Client client) {
+        clients.remove(client);
+    }
+
+    public void createSecurityForClient(Client client, String securityName, String category, LocalDate purchaseDate, double purchasePrice, int quantity) {
+        Portfolio portfolio = client.getPortfolio();
+        portfolio.addSecurity(securityName, category, purchaseDate, purchasePrice, quantity);
+    }
+
+    public boolean updateSecurityForClient(Client client, int securityId, String securityName, String category, LocalDate purchaseDate, double purchasePrice, int quantity) {
+        Portfolio portfolio = client.getPortfolio();
+        for (Security security : portfolio.getSecurities()) {
+            if (security.getSecurityId() == securityId) {
+                security.setSecurityName(securityName);
+                security.setCategory(category);
+                security.setPurchaseDate(purchaseDate);
+                security.setPurchasePrice(purchasePrice);
+                security.setQuantity(quantity);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean removeSecurityFromClient(Client client, int securityId) {
+        Portfolio portfolio = client.getPortfolio();
+        return portfolio.removeSecurityById(securityId);
+    }
+
 }
