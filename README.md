@@ -3,7 +3,5 @@
 - Developed data the system needed to keep track of.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/0554a419-0d63-4cc8-be81-17104025ce22" />
+  <img src="https://github.com/user-attachments/assets/39897e10-25e2-48e1-b98c-927bda28bdc4" />
 </p>
-
-
